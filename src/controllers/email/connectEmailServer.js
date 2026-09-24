@@ -1,46 +1,28 @@
-
-// const nodemailer = require('nodemailer');
-// require('dotenv').config();
-
-// const transporter = nodemailer.createTransport({
-//   host: process.env.SMTP_HOST,
-//   port: Number(process.env.SMTP_PORT),
-//   secure: false, // true for port 465, false for others
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASSWORD,
-//   },
-//   pool: true,               // keep the connection alive
-//   maxConnections: 5,        // adjust to taste
-//   maxMessages: 100,
-// });
-
-// module.exports = transporter;
-
-
-
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST, // smtpout.secureserver.net
+  host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT), // 587
-  secure: false, // MUST be false for port 587 (uses STARTTLS)
+  secure: false, // MUST be false for port 587
+  requireTLS: true, // Forces Nodemailer to send STARTTLS command
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
-  // Adding these prevents sendMail from hanging forever
-  connectionTimeout: 10000, // 10 seconds to connect
-  greetingTimeout: 10000,   // 10 seconds to receive SMTP greeting
-  socketTimeout: 15000,     // 15 seconds for socket inactivity
+  tls: {
+    ciphers: 'SSLv3',
+    rejectUnauthorized: false // Prevents local TLS handshake failures
+  },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 15000,
 });
 
-// Verify connection configuration on startup
 transporter.verify((error, success) => {
   if (error) {
-    console.error('SMTP Connection Verification Failed:', error.message);
+    console.error('SMTP Connection Verification Failed:', error);
   } else {
-    console.log('SMTP Server is ready to send emails');
+    console.log('✅ SMTP Server is ready to send emails');
   }
 });
 
