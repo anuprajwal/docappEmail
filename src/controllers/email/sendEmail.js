@@ -3,6 +3,7 @@ const transporter = require('./connectEmailServer');
 
 
 const sendEmail = async (req, res) => {
+  console.log('sendEmail called with body:', req.body);
   try {
     const { to, subject, text, html } = req.body;
 
@@ -17,6 +18,8 @@ const sendEmail = async (req, res) => {
       text,
       html,
     });
+
+    console.log('Email sent:', info);
 
     res.status(200).json({ message: 'Email sent', messageId: info.messageId });
   } catch (err) {
